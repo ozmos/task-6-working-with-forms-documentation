@@ -26,6 +26,7 @@ body {
 
 div.main {
     width: 100%;
+    
 }
 
 div.tree {
@@ -112,6 +113,7 @@ td {
 
 div.main h1 {
     font-weight: bold;
+    text-transform: capitalize;
 }
 
 div.main h2 {
