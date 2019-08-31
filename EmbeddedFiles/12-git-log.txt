@@ -1,0 +1,23 @@
+commit 2d60988ad454cf9c5af1aa1705544f1c091fd98e
+Author: ozmos <osamumorozumi@gmail.com>
+Date:   Fri Aug 30 19:48:41 2019 +0800
+
+    added error/success messages on change event for check box
+
+commit 5e13ff2d31bc143e2355adb0e64aee366a89a5b2
+Author: ozmos <osamumorozumi@gmail.com>
+Date:   Mon Aug 26 17:59:28 2019 +0800
+
+    enabled multiple classes on form label, changed enableTooltips function to add event listeners to labels
+
+commit bea9a5242c78796b4632e3ffc0aa808d7d3fd5c2
+Author: ozmos <osamumorozumi@gmail.com>
+Date:   Sat Aug 24 13:17:45 2019 +0800
+
+    refactored validation and functions
+
+commit 19975afffac16b78983bce9e19d1b4fa368d8515
+Author: ozmos <osamumorozumi@gmail.com>
+Date:   Wed Aug 21 23:27:41 2019 +0800
+
+    first commit

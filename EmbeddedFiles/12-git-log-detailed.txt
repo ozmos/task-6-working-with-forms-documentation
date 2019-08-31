@@ -1,0 +1,1472 @@
+commit 2d60988ad454cf9c5af1aa1705544f1c091fd98e
+Author: ozmos <osamumorozumi@gmail.com>
+Date:   Fri Aug 30 19:48:41 2019 +0800
+
+    added error/success messages on change event for check box
+
+diff --git a/css/newform.css b/css/newform.css
+index 3f9fc86..e769889 100644
+--- a/css/newform.css
++++ b/css/newform.css
+@@ -1,75 +1,87 @@
+ body {
+-	font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+-	font-size: 12px;
+-	background-color: #0E3D59;
++    font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
++    font-size: 12px;
++    background-color: #0E3D59;
+ }
+ 
+ form {
+-	background-color: #ffffff;
+-
+-	margin: 0 auto;
+-	padding: 14px;
+-	border: solid 2px #88A61B;
+-
++    background-color: #ffffff;
++    margin: 0 auto;
++    padding: 14px;
++    border: solid 2px #88A61B;
+ }
+ 
+ div {
+-	clear: both;
+-	padding-top: 10px;
++    clear: both;
++    padding-top: 10px;
+ }
+ 
+ div.two label {
+-	font-weight:bold;
+-	float: left;
+-	width: 100px;
+-	text-align: right;
+-	padding-right: 10px;
+-	position: relative;
++    font-weight: bold;
++    float: left;
++    width: 100px;
++    text-align: right;
++    padding-right: 10px;
++    position: relative;
+ }
+ 
+-div.two input, div.two select{
+-	float: left;
+-	width: 150px;
+-	text-align: left;
++div.two input,
++div.two select {
++    float: left;
++    width: 150px;
++    text-align: left;
+ }
+ 
+ div.two select {
+-	width: 157px;
+-	
++    width: 157px;
+ }
+ 
+ div.one {
+-	text-align: center;
++    text-align: center;
+ }
+ 
+-#submit{
+-	clear: both;
+-	width: 125px;
+-	height: 30px;
+-	background:#F29F05;
+-	text-align:center;
+-	line-height:20px;
+-	font-size:12px;
+-	font-weight:bold;
++#submit {
++    clear: both;
++    width: 125px;
++    height: 30px;
++    background: #F29F05;
++    text-align: center;
++    line-height: 20px;
++    font-size: 12px;
++    font-weight: bold;
+ }
+ 
+ .tooltip {
+-	display: block; 
+-	position: absolute; 
+-	visibility: hidden;
+-	left: 25em;
+-	top: 0; 
+-	width: 10em;
+-	padding: 0.5em;
+-	font-weight: normal;
+-	color: #FFF;
+-	background-color: #88A61B;
+-	border:solid 2px #0E3D59;
++    display: block;
++    position: absolute;
++    visibility: hidden;
++    left: 25em;
++    top: 0;
++    width: 10em;
++    padding: 0.5em;
++    font-weight: normal;
++    color: #FFF;
++    background-color: #88A61B;
++    border: solid 2px #0E3D59;
+ }
+ 
+ .error {
+-	color: #D92525;
++    color: #D92525;
++}
++
++label.error::before {
++    content: 'X ';
+ }
+-span.error{
+-	padding-left: 10px;
++
++span.error {
++    padding-left: 10px;
++}
++
++.success {
++    color: #13d613;
++}
++
++span.success {
++    padding-left: 10px;
++    font-size: 1.3em;
+ }
+\ No newline at end of file
+diff --git a/js/errorMessages.js b/js/errorMessages.js
+index 349fd8c..7bf4a77 100644
+--- a/js/errorMessages.js
++++ b/js/errorMessages.js
+@@ -3,6 +3,7 @@
+ 
+ // This function adds the error message.
+ // It takes two arguments: the form element ID and the message.
++
+ function addErrorMessage(id, msg) {
+    	'use strict';
+     
+@@ -21,12 +22,16 @@ function addErrorMessage(id, msg) {
+         // Create the span:
+         span = document.createElement('span');
+         span.id = newId;
++        //adding error class to span
++       
+ 		span.classList.add('error');
+         span.appendChild(document.createTextNode(msg));
+         
+         // Add the span to the parent:
+         elem.parentNode.appendChild(span);
+-        elem.previousSibling.classList.add('error');
++        // adding error class to label
++       
++        elem.previousElementSibling.classList.add('error');
+ 
+     } // End of main IF-ELSE.
+ 
+@@ -42,11 +47,63 @@ function removeErrorMessage(id) {
+ 	if (span) {
+     
+ 	    // Remove the class from the label:
+-	    span.previousSibling.previousSibling.classList.remove('error');
+-    
++	    span.previousElementSibling.previousElementSibling.classList.remove('error');
++        
+ 	    // Remove the span:
+ 	    span.parentNode.removeChild(span);
+-
++        
+ 	} // End of IF.
+     
+-} // End of removeErrorMessage() function.
+\ No newline at end of file
++} // End of removeErrorMessage() function.
++
++function addSuccessMessage(id) { 
++    'use strict';
++
++    // Get the form element reference:
++    var elem = document.getElementById(id);
++    
++    // Define the new span's ID value:
++    var newId = id + 'Success';
++    
++    // Check for the existence of the span:
++    var span = document.getElementById(newId);
++    if (span) {
++        span.firstChild.value = '\u2714'; // Update
++    } else { // Create new.
++    
++        // Create the span:
++        span = document.createElement('span');
++        span.id = newId;
++        // add success class
++		span.classList.add('success');
++        span.appendChild(document.createTextNode('\u2714'));
++        
++        // Add the span to the parent:
++        elem.parentNode.appendChild(span);
++        // add success class
++       
++        elem.previousElementSibling.classList.add('success');
++
++    } // End of main IF-ELSE.
++   
++} //end of addSuccessMessage Function
++
++function removeSuccessMessage (id) {
++   
++    'use strict';
++
++    // Get a reference to the span:
++    var span = document.getElementById(id + 'Success');
++    if (span) {
++    
++        // Remove the class from the label:
++        span.previousElementSibling.previousElementSibling.classList.remove('success');
++        
++        // Remove the span:
++        span.parentNode.removeChild(span);
++     
++    } // End of IF.
++    
++
++
++} //end of removeSuccessMessage function
+\ No newline at end of file
+diff --git a/js/register.js b/js/register.js
+index 610e633..388855e 100644
+--- a/js/register.js
++++ b/js/register.js
+@@ -23,32 +23,39 @@ function validateForm(e) {
+ 
+ 	// Flag variable:
+ 	var error = false;
+-	function validateTextField (field, regex, message) {
+-		'use strict';
+ 
++	// re-useable validation function
++	function validateTextField (field, regex) {
++		'use strict';
++		// trim leading/trailing white space before passing testing with regex
+ 		if (regex.test(field.value.trim())) {
+ 			removeErrorMessage(field.name);
++			addSuccessMessage(field.name);
+ 		} else {
+-			addErrorMessage(field.name, message);
++			removeSuccessMessage(field.name);
++			addErrorMessage(field.name, `Please enter your ${field.dataset.message}`);
+ 			error = true;
+ 		} 
++		
+ 	}
+ 	
+ 
+ 	// Validate the first name:
+-	validateTextField(firstName, /^[a-z ,.'\-]{2,30}$/i, 'Please enter letters, commas, spaces and hyphens only.' );
++	validateTextField(firstName, /^[a-z ,.'\-]{2,30}$/i);
+ 	// Validate the last name:
+-	validateTextField(lastName, /^[a-z ,.'\-]{2,30}$/i, 'Please enter letters, commas, spaces and hyphens only.');
++	validateTextField(lastName, /^[a-z ,.'\-]{2,30}$/i);
+ 	// Validate the email address:
+-	validateTextField(email, /^[\w.-]+@[\w.-]+\.[A-Za-z]{2,6}$/, 'Please enter a valid email address.');
++	validateTextField(email, /^[\w.-]+@[\w.-]+\.[A-Za-z]{2,6}$/);
+ 	// Validate the phone number:
+-	validateTextField(phone, /\d{3}[ \-]?\d{3}[ \-]?\d{4}/, 'Please enter your phone number in the format XXX XXX XXX, XXX-XXX-XXXX or XXXXXXXXXX.');
++	validateTextField(phone, /\d{3}[ \-]?\d{3}[ \-]?\d{4}/);
+ 	// Validate City:
+-	validateTextField(city, /^[a-z ,.'\-]{2,40}$/i, 'Please enter letters, commas, spaces, hyphens  and full-stops only.');
++	validateTextField(city, /^[a-z ,.'\-]{2,40}$/i);
+ 	// Validate the state:
+ 	if (state.selectedIndex != 0) {
+ 		removeErrorMessage('state');
++		addSuccessMessage('state');
+ 	} else {
++		removeSuccessMessage('state');
+ 		addErrorMessage('state', 'Please select your state.');
+ 		error = true;
+ 	}
+@@ -89,8 +96,9 @@ function validateForm(e) {
+ 	// validates depending if state has been selected
+ 	if (state.selectedIndex != 0) {
+ 		removeErrorMessage('zip');
+-		validateTextField(zip, postCodeRegex(state.value), 'Please enter your post code starting with the correct digit and with exactly 4 digits.');
++		validateTextField(zip, postCodeRegex(state.value));
+ 	} else {
++		removeSuccessMessage('zip');
+ 		addErrorMessage('zip', 'Please select your state before you enter your post code');
+ 		error = true;
+ 	}
+@@ -111,23 +119,52 @@ function validateForm(e) {
+     
+ } // End of validateForm() function.
+ 
++// Function to get correct field name for error message 
++function fieldName (id) {
++	//check if id is camel cased
++	var regex = /[A-Z]/;
++	var splitPoint = /([A-Z])/g;
++	if (regex.test(id)) {
++		//split at uppercase see https://stackoverflow.com/questions/18379254/regex-to-split-camel-case
++		return id.replace(splitPoint, ' $1').toLowerCase();
++	} return id;
++}
++// Function to add or remove error messages when terms checkbox changes
++function toggleErrors() {
++	var inputs = Array.from(document.getElementsByClassName('field'));
++	// toggle error class on any empty fields
++	//check for any empty fields
++	var emptyFields = inputs.filter(field => field.value === '');
++	if (emptyFields.length > 0) error = true;
++	// toggle error class on empty fields
++	
++	emptyFields.forEach(field => {
++		!field.classList.contains('error') && field.classList.add('error');
++		addErrorMessage(field.id, 'Please enter your ' + fieldName(field.name)); //TODO: use previousElementChild.innerHtml to get name value
++	});
++}
+ // Function called when the terms checkbox changes.
+ // Function enables and disables the submit button.
+ function toggleSubmit() {
+ 	'use strict';
+-    
++ 
+ 	// Get a reference to the submit button:
+ 	var submit = U.$('submit');
++	var checked = U.$('terms').checked;
+ 	
+ 	// Toggle its disabled property:
+-	if (U.$('terms').checked) {
++	if (checked) {
+ 		submit.disabled = false;
++		validateForm();
+ 	} else {
+ 		submit.disabled = true;
++	
+ 	}
+ 	
+ } // End of toggleSubmit() function.
+ 
++
++
+ // Establish functionality on window load:
+ window.onload = function() {
+     'use strict';
+@@ -143,11 +180,10 @@ window.onload = function() {
+ 
+ 	// Enbable tooltips on all input elements:
+ 	var inputs = ['firstName', 'lastName', 'phone', 'email', 'city', 'state', 'zip'];
+-	/* inputs.forEach(id => U.enableTooltips(id)); */
+-	es5: 
++	
+ 	inputs.forEach(function(id) {
+ 		U.enableTooltips(id);
+ 	});
+ 	
+     
+-};
+\ No newline at end of file
++}
+\ No newline at end of file
+diff --git a/register.html b/register.html
+index b800bb8..8946891 100644
+--- a/register.html
++++ b/register.html
+@@ -20,37 +20,37 @@
+                 <label for="firstName">First Name
+                     <span class="tooltip">Letters, commas, spaces, hyphens and full-stops only</span>
+                 </label>
+-                <input type="text" name="firstName" id="firstName" required>
++                <input type="text" name="firstName" class="field" id="firstName" data-message="first name" required>
+             </div>
+             <div class="two">
+                 <label for="lastName">Last Name
+                     <span class="tooltip">Letters, commas, spaces, hyphens and full-stops only</span>
+                 </label>
+-                <input type="text" name="lastName" id="lastName" required>
++                <input type="text" name="lastName" class="field" id="lastName" data-message="last name" required>
+             </div>
+             <div class="two">
+                 <label for="email">Email Address
+                     <span class="tooltip">Please enter a valid email address</span>
+                 </label>
+-                <input type="text" name="email" id="email" required>
++                <input type="text" name="email" class="field" id="email" data-message="email address" required>
+             </div>
+             <div class="two">
+                 <label for="phone">Phone Number
+                     <span class="tooltip">In the format XXX XXX XXXX or XXX-XXX-XXXX or XXXXXXXXXX.</span>
+                 </label>
+-                <input type="text" name="phone" id="phone" required>
++                <input type="text" name="phone" class="field" id="phone" data-message="phone number" required>
+             </div>
+             <div class="two">
+                 <label for="city">City
+                     <span class="tooltip">Letters, commas, spaces, hyphens and full-stops only</span>
+                 </label>
+-                <input type="text" name="city" id="city" required>
++                <input type="text" name="city" class="field" id="city" data-message="city" required>
+             </div>
+             <div class="two">
+                 <label for="state">State
+                     <span class="tooltip">Please select a state from the list</span>
+                 </label>
+-                <select name="state" id="state">
++                <select name="state" class="field" id="state">
+                     <option value="">Select a State</option> 
+                     <option value="WA">Western Australia</option> 
+                     <option value="SA">South Australia</option> 
+@@ -66,7 +66,7 @@
+                 <label for="zip">Post Code
+                     <span class="tooltip">In the format XXXX and starting with the correct digit for your state</span>
+                 </label>
+-                <input type="text" name="zip" id="zip" required>
++                <input type="text" name="zip" class="field" id="zip" data-message="post code" required>
+             </div>
+             <div class="one">
+                 <input type="checkbox" name="terms" id="terms" required> I agree to the terms, whatever they are.
+
+commit 5e13ff2d31bc143e2355adb0e64aee366a89a5b2
+Author: ozmos <osamumorozumi@gmail.com>
+Date:   Mon Aug 26 17:59:28 2019 +0800
+
+    enabled multiple classes on form label, changed enableTooltips function to add event listeners to labels
+
+diff --git a/js/errorMessages.js b/js/errorMessages.js
+index ac3a79c..349fd8c 100644
+--- a/js/errorMessages.js
++++ b/js/errorMessages.js
+@@ -21,12 +21,12 @@ function addErrorMessage(id, msg) {
+         // Create the span:
+         span = document.createElement('span');
+         span.id = newId;
+-		span.className = 'error'
++		span.classList.add('error');
+         span.appendChild(document.createTextNode(msg));
+         
+         // Add the span to the parent:
+         elem.parentNode.appendChild(span);
+-        elem.previousSibling.className = 'error';
++        elem.previousSibling.classList.add('error');
+ 
+     } // End of main IF-ELSE.
+ 
+@@ -42,7 +42,7 @@ function removeErrorMessage(id) {
+ 	if (span) {
+     
+ 	    // Remove the class from the label:
+-	    span.previousSibling.previousSibling.className = null;
++	    span.previousSibling.previousSibling.classList.remove('error');
+     
+ 	    // Remove the span:
+ 	    span.parentNode.removeChild(span);
+diff --git a/js/register.js b/js/register.js
+index a5a276e..610e633 100644
+--- a/js/register.js
++++ b/js/register.js
+@@ -44,7 +44,7 @@ function validateForm(e) {
+ 	// Validate the phone number:
+ 	validateTextField(phone, /\d{3}[ \-]?\d{3}[ \-]?\d{4}/, 'Please enter your phone number in the format XXX XXX XXX, XXX-XXX-XXXX or XXXXXXXXXX.');
+ 	// Validate City:
+-	validateTextField(city, /^[a-z ,.'\-]{2,40}$/i, 'Please enter letters, commas, spaces and hyphens only.');
++	validateTextField(city, /^[a-z ,.'\-]{2,40}$/i, 'Please enter letters, commas, spaces, hyphens  and full-stops only.');
+ 	// Validate the state:
+ 	if (state.selectedIndex != 0) {
+ 		removeErrorMessage('state');
+@@ -56,7 +56,7 @@ function validateForm(e) {
+ 	// Validate the zip code:
+ 	// separate function to dynamically create regular expression that will target correct leading digit depending on state/territory
+ 	function postCodeRegex (state) {
+-		
++		'use strict';
+ 		switch(state) {
+ 			case 'WA' :
+ 				var prefix = '6';
+@@ -65,16 +65,16 @@ function validateForm(e) {
+ 				var prefix = '5';
+ 				break;
+ 			case 'VIC' :
+-				var prefix = '3|8';
++				var prefix = '3|8'; //allows for PO box post code
+ 				break;
+ 			case 'TAS' :
+ 				var prefix = '7';
+ 				break;
+ 			case 'NSW' :
+-				var prefix = '1|2';
++				var prefix = '1|2'; //allows for PO box post code
+ 				break;
+ 			case 'QLD' :
+-				var prefix = '4|9';
++				var prefix = '4|9'; //allows for PO box post code
+ 				break;
+ 			case 'ACT' :
+ 			case 'NT' :
+@@ -141,7 +141,13 @@ window.onload = function() {
+ 	// Watch for changes on the terms checkbox:
+     U.addEvent(U.$('terms'), 'change', toggleSubmit);
+ 
+-	// Enbable tooltips on the phone number:
+-	U.enableTooltips('phone');
++	// Enbable tooltips on all input elements:
++	var inputs = ['firstName', 'lastName', 'phone', 'email', 'city', 'state', 'zip'];
++	/* inputs.forEach(id => U.enableTooltips(id)); */
++	es5: 
++	inputs.forEach(function(id) {
++		U.enableTooltips(id);
++	});
++	
+     
+ };
+\ No newline at end of file
+diff --git a/js/utilities.js b/js/utilities.js
+index fbcab96..f271028 100644
+--- a/js/utilities.js
++++ b/js/utilities.js
+@@ -53,28 +53,38 @@ var U = {
+ 
+ 	enableTooltips: function(id) {
+ 	    'use strict';
+-	
++        
+ 		// Get a reference to the element:
+ 		var elem = this.$(id);
+-
+-		// Add four event handlers to the element:
+-		this.addEvent(elem, 'focus', this.showTooltip);
++        // Add four event handlers to the element:
++        this.addEvent(elem, 'focus', this.showTooltip);
+ 	    this.addEvent(elem, 'mouseover', this.showTooltip);
+ 	    this.addEvent(elem, 'blur', this.hideTooltip);
+-	    this.addEvent(elem, 'mouseout', this.hideTooltip);
+-	
++        this.addEvent(elem, 'mouseout', this.hideTooltip);
++        // add same event handlers to label element:
++        var label = elem.previousElementSibling;
++       
++        this.addEvent(label, 'focus', this.showTooltip);
++        this.addEvent(label, 'mouseover', this.showTooltip);
++	    this.addEvent(label, 'blur', this.hideTooltip);
++        this.addEvent(label, 'mouseout', this.hideTooltip);
++      
+ 	}, // End of enableTooltips() function.
+ 
+ 	showTooltip: function(e) {
+ 	    'use strict';
+-	
++        
+ 		// Get the event object:
+ 		if (typeof e == 'undefined') var e = window.event;
+ 
+ 		// Get the event target:
+-		var target = e.target || e.srcElement;
+-		target.previousSibling.lastChild.style.visibility = 'visible';
+-
++        var target = e.target || e.srcElement;
++        if (target.previousElementSibling) {
++            target.previousElementSibling.lastElementChild.style.visibility = 'visible';
++        } else {
++            target.lastElementChild.style.visibility = 'visible';
++        }
++		
+ 	}, // End of showTooltip() function.
+ 
+ 	hideTooltip: function(e) {
+@@ -85,7 +95,11 @@ var U = {
+ 
+ 		// Get the event target:
+ 		var target = e.target || e.srcElement;
+-		target.previousSibling.lastChild.style.visibility = 'hidden';
++		if (target.previousElementSibling) {
++            target.previousElementSibling.lastElementChild.style.visibility = 'hidden';
++        } else {
++            target.lastElementChild.style.visibility = 'hidden';
++        }
+ 
+ 	} // End of hideTooltip() function.
+ 
+diff --git a/register.html b/register.html
+index b3c429e..b800bb8 100644
+--- a/register.html
++++ b/register.html
+@@ -16,28 +16,69 @@
+         <fieldset>
+             <legend>Register</legend>
+             <p>All fields are required.</p>
+-            <div class="two"><label for="firstName">First Name</label><input type="text" name="firstName" id="firstName" required></div>
+-            <div class="two"><label for="lastName">Last Name</label><input type="text" name="lastName" id="lastName" required></div>
+-            <div class="two"><label for="email">Email Address</label><input type="text" name="email" id="email" required></div>
+-            <div class="two"><label for="phone">Phone Number<span class="tooltip">In the format XXX XXX XXXX or XXX-XXX-XXXX or XXXXXXXXXX.</span></label><input type="text" name="phone" id="phone" required></div>
+-            <div class="two"><label for="city">City</label><input type="text" name="city" id="city" required></div>
+-            <div class="two"><label for="state">State</label><select name="state" id="state">
+-				<option value="">Select a State</option> 
+-				<option value="WA">Western Australia</option> 
+-				<option value="SA">South Australia</option> 
+-                <option value="TAS">Tasmania</option> 
+-                <option value="VIC">Victoria</option>
+-				<option value="NSW">New South Wales</option> 
+-				<option value="QLD">Queensland</option> 
+-				<option value="NT">Northern Territory</option>           
+-				<option value="ACT">Australian Capital Territory</option>
+-			</select></div>
+-            <div class="two"><label for="zip">Post Code</label><input type="text" name="zip" id="zip" required></div>
+-            <div class="one"><input type="checkbox" name="terms" id="terms" required> I agree to the terms, whatever they are.</div>
+-            <div class="one"><input type="submit" value="Register" id="submit"></div>
++            <div class="two">
++                <label for="firstName">First Name
++                    <span class="tooltip">Letters, commas, spaces, hyphens and full-stops only</span>
++                </label>
++                <input type="text" name="firstName" id="firstName" required>
++            </div>
++            <div class="two">
++                <label for="lastName">Last Name
++                    <span class="tooltip">Letters, commas, spaces, hyphens and full-stops only</span>
++                </label>
++                <input type="text" name="lastName" id="lastName" required>
++            </div>
++            <div class="two">
++                <label for="email">Email Address
++                    <span class="tooltip">Please enter a valid email address</span>
++                </label>
++                <input type="text" name="email" id="email" required>
++            </div>
++            <div class="two">
++                <label for="phone">Phone Number
++                    <span class="tooltip">In the format XXX XXX XXXX or XXX-XXX-XXXX or XXXXXXXXXX.</span>
++                </label>
++                <input type="text" name="phone" id="phone" required>
++            </div>
++            <div class="two">
++                <label for="city">City
++                    <span class="tooltip">Letters, commas, spaces, hyphens and full-stops only</span>
++                </label>
++                <input type="text" name="city" id="city" required>
++            </div>
++            <div class="two">
++                <label for="state">State
++                    <span class="tooltip">Please select a state from the list</span>
++                </label>
++                <select name="state" id="state">
++                    <option value="">Select a State</option> 
++                    <option value="WA">Western Australia</option> 
++                    <option value="SA">South Australia</option> 
++                    <option value="TAS">Tasmania</option> 
++                    <option value="VIC">Victoria</option>
++                    <option value="NSW">New South Wales</option> 
++                    <option value="QLD">Queensland</option> 
++                    <option value="NT">Northern Territory</option>           
++                    <option value="ACT">Australian Capital Territory</option>
++                </select>
++            </div>
++            <div class="two">
++                <label for="zip">Post Code
++                    <span class="tooltip">In the format XXXX and starting with the correct digit for your state</span>
++                </label>
++                <input type="text" name="zip" id="zip" required>
++            </div>
++            <div class="one">
++                <input type="checkbox" name="terms" id="terms" required> I agree to the terms, whatever they are.
++            </div>
++            <div class="one">
++                <input type="submit" value="Register" id="submit">
++            </div>
+             <input type="reset">
+         </fieldset>
+     </form>
++    <!-- allows use of latest ES2015+ script features on older browsers NOT A LIBRARY OR FRAMEWORK -->
++    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.4/polyfill.min.js" integrity="sha256-lu1gm0Fb5u5n6tuNLefOZNE96ckovOjhNzvsl+Iz50w=" crossorigin="anonymous"></script>
+     <script src="js/utilities.js"></script>
+     <script src="js/errorMessages.js"></script>
+     <script src="js/register.js"></script>
+
+commit bea9a5242c78796b4632e3ffc0aa808d7d3fd5c2
+Author: ozmos <osamumorozumi@gmail.com>
+Date:   Sat Aug 24 13:17:45 2019 +0800
+
+    refactored validation and functions
+
+diff --git a/js/register.js b/js/register.js
+index d27d0e1..a5a276e 100644
+--- a/js/register.js
++++ b/js/register.js
+@@ -1,5 +1,6 @@
+ // Script 10.7- register.js
+ // This script validates a form.
++// reusable validation function to keep code dry
+ 
+ // Function called when the form is submitted.
+ // Function validates the form data.
+@@ -9,7 +10,8 @@ function validateForm(e) {
+     // Get the event object:
+ 	if (typeof e == 'undefined') e = window.event;
+ 
+-    // Get form references:
++		// Get form references:
++	
+ 	var firstName = U.$('firstName');
+ 	var lastName = U.$('lastName');
+ 	var email = U.$('email');
+@@ -21,31 +23,28 @@ function validateForm(e) {
+ 
+ 	// Flag variable:
+ 	var error = false;
++	function validateTextField (field, regex, message) {
++		'use strict';
+ 
+-	// Validate the first name:
+-	if (/^[A-Z \.\-']{2,20}$/i.test(firstName.value)) {
+-		removeErrorMessage('firstName');
+-	} else {
+-		addErrorMessage('firstName', 'Please enter your first name.');
+-		error = true;
++		if (regex.test(field.value.trim())) {
++			removeErrorMessage(field.name);
++		} else {
++			addErrorMessage(field.name, message);
++			error = true;
++		} 
+ 	}
+ 	
++
++	// Validate the first name:
++	validateTextField(firstName, /^[a-z ,.'\-]{2,30}$/i, 'Please enter letters, commas, spaces and hyphens only.' );
++	// Validate the last name:
++	validateTextField(lastName, /^[a-z ,.'\-]{2,30}$/i, 'Please enter letters, commas, spaces and hyphens only.');
+ 	// Validate the email address:
+-	if (/^[\w.-]+@[\w.-]+\.[A-Za-z]{2,6}$/.test(email.value)) {
+-		removeErrorMessage('email');
+-	} else {
+-		addErrorMessage('email', 'Please enter your email address.');
+-		error = true;
+-	}
+-	
++	validateTextField(email, /^[\w.-]+@[\w.-]+\.[A-Za-z]{2,6}$/, 'Please enter a valid email address.');
+ 	// Validate the phone number:
+-	if (/\d{3}[ \-\.]?\d{3}[ \-\.]?\d{4}/.test(phone.value)) {
+-		removeErrorMessage('phone');
+-	} else {
+-		addErrorMessage('phone', 'Please enter your phone number.');
+-		error = true;
+-	}
+-	
++	validateTextField(phone, /\d{3}[ \-]?\d{3}[ \-]?\d{4}/, 'Please enter your phone number in the format XXX XXX XXX, XXX-XXX-XXXX or XXXXXXXXXX.');
++	// Validate City:
++	validateTextField(city, /^[a-z ,.'\-]{2,40}$/i, 'Please enter letters, commas, spaces and hyphens only.');
+ 	// Validate the state:
+ 	if (state.selectedIndex != 0) {
+ 		removeErrorMessage('state');
+@@ -55,12 +54,47 @@ function validateForm(e) {
+ 	}
+ 	
+ 	// Validate the zip code:
+-	if (/^\d{5}(-\d{4})?$/.test(zip.value)) {
++	// separate function to dynamically create regular expression that will target correct leading digit depending on state/territory
++	function postCodeRegex (state) {
++		
++		switch(state) {
++			case 'WA' :
++				var prefix = '6';
++				break;
++			case 'SA' :
++				var prefix = '5';
++				break;
++			case 'VIC' :
++				var prefix = '3|8';
++				break;
++			case 'TAS' :
++				var prefix = '7';
++				break;
++			case 'NSW' :
++				var prefix = '1|2';
++				break;
++			case 'QLD' :
++				var prefix = '4|9';
++				break;
++			case 'ACT' :
++			case 'NT' :
++				var prefix = '0';
++				break;
++			default:
++			var	prefix = '';
++		}
++		
++		return new RegExp('^'+prefix+'\\d{3}$'); //special characters need to be double escaped using regex constructor see https://stackoverflow.com/questions/17863066/why-do-regex-constructors-need-to-be-double-escaped
++	}
++	// validates depending if state has been selected
++	if (state.selectedIndex != 0) {
+ 		removeErrorMessage('zip');
++		validateTextField(zip, postCodeRegex(state.value), 'Please enter your post code starting with the correct digit and with exactly 4 digits.');
+ 	} else {
+-			addErrorMessage('zip', 'Please enter your zip code.');
++		addErrorMessage('zip', 'Please select your state before you enter your post code');
+ 		error = true;
+ 	}
++	
+ 
+     // If an error occurred, prevent the default behavior:
+ 	if (error) {
+diff --git a/register.html b/register.html
+index 74f3796..b3c429e 100644
+--- a/register.html
++++ b/register.html
+@@ -1,5 +1,6 @@
+ <!doctype html>
+ <html lang="en">
++
+ <head>
+     <meta charset="utf-8">
+     <title>Registration Form</title>
+@@ -8,32 +9,38 @@
+     <![endif]-->
+     <link rel="stylesheet" href="css/newform.css">
+ </head>
++
+ <body>
+     <!-- Script 10.6 - register.html -->
+     <form action="#" method="post" id="theForm">
+-        <fieldset><legend>Register</legend>
+-			<p>All fields are required.</p>
+-			<div class="two"><label for="firstName">First Name</label><input type="text" name="firstName" id="firstName" required></div>
+-			<div class="two"><label for="lastName">Last Name</label><input type="text" name="lastName" id="lastName" required></div>
+-			<div class="two"><label for="email">Email Address</label><input type="email" name="email" id="email" required></div>
+-			<div class="two"><label for="phone">Phone Number<span class="tooltip">In the format XXX XXX XXXX or XXX-XXX-XXXX or XXXXXXXXXX.</span></label><input type="text" name="phone" id="phone" required></div>
+-			<div class="two"><label for="city">City</label><input type="text" name="city" id="city" required></div>
+-			<div class="two"><label for="state">State</label><select name="state" id="state">
++        <fieldset>
++            <legend>Register</legend>
++            <p>All fields are required.</p>
++            <div class="two"><label for="firstName">First Name</label><input type="text" name="firstName" id="firstName" required></div>
++            <div class="two"><label for="lastName">Last Name</label><input type="text" name="lastName" id="lastName" required></div>
++            <div class="two"><label for="email">Email Address</label><input type="text" name="email" id="email" required></div>
++            <div class="two"><label for="phone">Phone Number<span class="tooltip">In the format XXX XXX XXXX or XXX-XXX-XXXX or XXXXXXXXXX.</span></label><input type="text" name="phone" id="phone" required></div>
++            <div class="two"><label for="city">City</label><input type="text" name="city" id="city" required></div>
++            <div class="two"><label for="state">State</label><select name="state" id="state">
+ 				<option value="">Select a State</option> 
+-				<option value="AL">Alabama</option> 
+-				<option value="AK">Alaska</option> 
+-				<option value="AZ">Arizona</option> 
+-				<option value="AR">Arkansas</option> 
+-				<option value="CA">California</option> 
+-				<option value="CO">Colorado</option>           
+-			</select></div>    
+-			<div class="two"><label for="zip">Zip Code</label><input type="text" name="zip" id="zip" required></div>
+-			<div class="one"><input type="checkbox" name="terms" id="terms" required> I agree to the terms, whatever they are.</div>
+-			<div class="one"><input type="submit" value="Register" id="submit"></div>
++				<option value="WA">Western Australia</option> 
++				<option value="SA">South Australia</option> 
++                <option value="TAS">Tasmania</option> 
++                <option value="VIC">Victoria</option>
++				<option value="NSW">New South Wales</option> 
++				<option value="QLD">Queensland</option> 
++				<option value="NT">Northern Territory</option>           
++				<option value="ACT">Australian Capital Territory</option>
++			</select></div>
++            <div class="two"><label for="zip">Post Code</label><input type="text" name="zip" id="zip" required></div>
++            <div class="one"><input type="checkbox" name="terms" id="terms" required> I agree to the terms, whatever they are.</div>
++            <div class="one"><input type="submit" value="Register" id="submit"></div>
++            <input type="reset">
+         </fieldset>
+     </form>
+     <script src="js/utilities.js"></script>
+     <script src="js/errorMessages.js"></script>
+     <script src="js/register.js"></script>
+ </body>
++
+ </html>
+\ No newline at end of file
+
+commit 19975afffac16b78983bce9e19d1b4fa368d8515
+Author: ozmos <osamumorozumi@gmail.com>
+Date:   Wed Aug 21 23:27:41 2019 +0800
+
+    first commit
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..eca940c
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,2 @@
++/documents
++
+diff --git a/css/.DS_Store b/css/.DS_Store
+new file mode 100644
+index 0000000..22e4486
+Binary files /dev/null and b/css/.DS_Store differ
+diff --git a/css/newform.css b/css/newform.css
+new file mode 100644
+index 0000000..3f9fc86
+--- /dev/null
++++ b/css/newform.css
+@@ -0,0 +1,75 @@
++body {
++	font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
++	font-size: 12px;
++	background-color: #0E3D59;
++}
++
++form {
++	background-color: #ffffff;
++
++	margin: 0 auto;
++	padding: 14px;
++	border: solid 2px #88A61B;
++
++}
++
++div {
++	clear: both;
++	padding-top: 10px;
++}
++
++div.two label {
++	font-weight:bold;
++	float: left;
++	width: 100px;
++	text-align: right;
++	padding-right: 10px;
++	position: relative;
++}
++
++div.two input, div.two select{
++	float: left;
++	width: 150px;
++	text-align: left;
++}
++
++div.two select {
++	width: 157px;
++	
++}
++
++div.one {
++	text-align: center;
++}
++
++#submit{
++	clear: both;
++	width: 125px;
++	height: 30px;
++	background:#F29F05;
++	text-align:center;
++	line-height:20px;
++	font-size:12px;
++	font-weight:bold;
++}
++
++.tooltip {
++	display: block; 
++	position: absolute; 
++	visibility: hidden;
++	left: 25em;
++	top: 0; 
++	width: 10em;
++	padding: 0.5em;
++	font-weight: normal;
++	color: #FFF;
++	background-color: #88A61B;
++	border:solid 2px #0E3D59;
++}
++
++.error {
++	color: #D92525;
++}
++span.error{
++	padding-left: 10px;
++}
+\ No newline at end of file
+diff --git a/css/styles.css b/css/styles.css
+new file mode 100644
+index 0000000..1913449
+--- /dev/null
++++ b/css/styles.css
+@@ -0,0 +1,154 @@
++/* From: http://www.assemblesoft.com/examples/form/simpleform.html */
++* {margin:0; padding:0;}
++
++html {
++	font: 90%/1.3 arial,sans-serif;
++	padding:1em;
++	background:#B9C2CC;
++}
++form {
++	background:#fff;
++	padding:1em;
++	border:1px solid #eee;
++}
++
++fieldset div {
++	margin:0.3em 0;
++	clear:both;
++}
++
++form {
++	margin:1em;
++	width:25em;
++}
++
++label {
++	float:none;
++	width:12em;
++	display:block;
++	clear:both;
++}
++
++legend {
++	color:#0b77b7;
++	font-size:1.4em;
++}
++legend span {
++	width:10em;
++	text-align:right;
++}
++input {
++	padding:0.15em;
++	width:10em;
++	border:1px solid #ddd;
++	background:#fafafa;
++	font:bold 1em arial, sans-serif;
++	display:block;
++	float:left;
++}
++input:hover, input:focus {
++	border-color:#c5c5c5;
++	background:#f6f6f6;
++} 
++fieldset {
++	border:1px solid #ddd;
++	padding:0 0.5em 0.5em;
++}
++.date input {
++	background-image:url(../gfx/calendar-small.gif);
++	background-repeat:no-repeat;
++	background-position:100% 50%;
++}
++
++.date fieldset label {
++	float:none;
++	display:block;
++	text-align:left;
++	width:auto;
++}
++.date fieldset div {
++	float:left;
++	clear:none;
++	margin-right:0.2em;
++}
++.radio, .date {
++	position:relative;
++}
++.radio fieldset, .date fieldset {
++	border:none;
++	width:auto;
++	padding:1px 0 0 11em;
++}
++.radio legend, .date legend {
++	font-size:1em;
++	color:#000;
++}
++.radio legend span, .date legend span {
++	position:absolute;
++	left:0;
++	top:0.3em;
++	width:10em;
++	display:block;
++}
++.radio label, .radio input {
++	vertical-align:middle;
++	display:inline;
++	float:none;
++	width:auto;
++	background:none;
++	border:none;
++}
++.radio div {
++	float:left;
++	white-space:nowrap;
++	clear:none;
++}
++
++.email {
++	width:14em;
++}
++
++input.default {
++	color:#bbb;
++}
++
++#submit {
++	margin:1em;
++	width:69px;
++	height:26px;
++	overflow:hidden;
++	border:0;
++	display:block;
++}
++#submit:hover {
++	background-position:0 -26px;
++}
++
++textarea {
++	padding:0.15em;
++	width: 200px;
++	height: 50px;
++	display: block;
++}
++
++.error {
++	color: #FF1400;
++}
++/*
++:invalid {
++	color:red;
++}
++*/
++/*
++input[type=checkbox], input[type=radio] { visibility: hidden; width:0; height:0; padding:0; margin:0; }
++input[type=checkbox] + label, input[type=radio] + label { padding-left:18px; }
++input[type=checkbox] + label{ background: url(../gfx/check_radio.png) 0 0 no-repeat; }
++input[type=checkbox]:focus + label{ background-position: 0 -16px; }
++input[type=checkbox] + label:hover{ background-position: 0 -32px; } 
++input[type=checkbox]:checked + label{ background-position: 0 -48px; }
++
++input[type=radio] + label{ background: url(../gfx/check_radio.png) 0 -64px no-repeat; }
++input[type=radio]:focus + label{ background-position: 0 -80px; }
++input[type=radio] + label:hover{ background-position: 0 -96px; } 
++input[type=radio]:checked + label{ background-position: 0 -112px; }
++*/
+\ No newline at end of file
+diff --git a/js/errorMessages.js b/js/errorMessages.js
+new file mode 100644
+index 0000000..ac3a79c
+--- /dev/null
++++ b/js/errorMessages.js
+@@ -0,0 +1,52 @@
++// Script 10.1 - errorMessages.js
++// This script defines functions for adding and removing error messages.
++
++// This function adds the error message.
++// It takes two arguments: the form element ID and the message.
++function addErrorMessage(id, msg) {
++   	'use strict';
++    
++    // Get the form element reference:
++    var elem = document.getElementById(id);
++    
++    // Define the new span's ID value:
++    var newId = id + 'Error';
++    
++    // Check for the existence of the span:
++    var span = document.getElementById(newId);
++    if (span) {
++        span.firstChild.value = msg; // Update
++    } else { // Create new.
++    
++        // Create the span:
++        span = document.createElement('span');
++        span.id = newId;
++		span.className = 'error'
++        span.appendChild(document.createTextNode(msg));
++        
++        // Add the span to the parent:
++        elem.parentNode.appendChild(span);
++        elem.previousSibling.className = 'error';
++
++    } // End of main IF-ELSE.
++
++} // End of addErrorMessage() function.
++
++// This function removes the error message.
++// It takes one argument: the form element ID.
++function removeErrorMessage(id) {
++   	'use strict';
++
++    // Get a reference to the span:
++    var span = document.getElementById(id + 'Error');
++	if (span) {
++    
++	    // Remove the class from the label:
++	    span.previousSibling.previousSibling.className = null;
++    
++	    // Remove the span:
++	    span.parentNode.removeChild(span);
++
++	} // End of IF.
++    
++} // End of removeErrorMessage() function.
+\ No newline at end of file
+diff --git a/js/register.js b/js/register.js
+new file mode 100644
+index 0000000..d27d0e1
+--- /dev/null
++++ b/js/register.js
+@@ -0,0 +1,113 @@
++// Script 10.7- register.js
++// This script validates a form.
++
++// Function called when the form is submitted.
++// Function validates the form data.
++function validateForm(e) {
++    'use strict';
++
++    // Get the event object:
++	if (typeof e == 'undefined') e = window.event;
++
++    // Get form references:
++	var firstName = U.$('firstName');
++	var lastName = U.$('lastName');
++	var email = U.$('email');
++	var phone = U.$('phone');
++	var city = U.$('city');
++	var state = U.$('state');
++	var zip = U.$('zip');
++	var terms = U.$('terms');
++
++	// Flag variable:
++	var error = false;
++
++	// Validate the first name:
++	if (/^[A-Z \.\-']{2,20}$/i.test(firstName.value)) {
++		removeErrorMessage('firstName');
++	} else {
++		addErrorMessage('firstName', 'Please enter your first name.');
++		error = true;
++	}
++	
++	// Validate the email address:
++	if (/^[\w.-]+@[\w.-]+\.[A-Za-z]{2,6}$/.test(email.value)) {
++		removeErrorMessage('email');
++	} else {
++		addErrorMessage('email', 'Please enter your email address.');
++		error = true;
++	}
++	
++	// Validate the phone number:
++	if (/\d{3}[ \-\.]?\d{3}[ \-\.]?\d{4}/.test(phone.value)) {
++		removeErrorMessage('phone');
++	} else {
++		addErrorMessage('phone', 'Please enter your phone number.');
++		error = true;
++	}
++	
++	// Validate the state:
++	if (state.selectedIndex != 0) {
++		removeErrorMessage('state');
++	} else {
++		addErrorMessage('state', 'Please select your state.');
++		error = true;
++	}
++	
++	// Validate the zip code:
++	if (/^\d{5}(-\d{4})?$/.test(zip.value)) {
++		removeErrorMessage('zip');
++	} else {
++			addErrorMessage('zip', 'Please enter your zip code.');
++		error = true;
++	}
++
++    // If an error occurred, prevent the default behavior:
++	if (error) {
++
++		// Prevent the form's submission:
++	    if (e.preventDefault) {
++	        e.preventDefault();
++	    } else {
++	        e.returnValue = false;
++	    }
++	    return false;
++    
++	}
++    
++} // End of validateForm() function.
++
++// Function called when the terms checkbox changes.
++// Function enables and disables the submit button.
++function toggleSubmit() {
++	'use strict';
++    
++	// Get a reference to the submit button:
++	var submit = U.$('submit');
++	
++	// Toggle its disabled property:
++	if (U.$('terms').checked) {
++		submit.disabled = false;
++	} else {
++		submit.disabled = true;
++	}
++	
++} // End of toggleSubmit() function.
++
++// Establish functionality on window load:
++window.onload = function() {
++    'use strict';
++
++	// The validateForm() function handles the form:
++    U.addEvent(U.$('theForm'), 'submit', validateForm);
++
++	// Disable the submit button to start:
++	U.$('submit').disabled = true;
++
++	// Watch for changes on the terms checkbox:
++    U.addEvent(U.$('terms'), 'change', toggleSubmit);
++
++	// Enbable tooltips on the phone number:
++	U.enableTooltips('phone');
++    
++};
+\ No newline at end of file
+diff --git a/js/utilities.js b/js/utilities.js
+new file mode 100644
+index 0000000..fbcab96
+--- /dev/null
++++ b/js/utilities.js
+@@ -0,0 +1,92 @@
++// Script 8.1 - utilities.js
++// This script defines an object that has some utilitarian functions.
++
++var U = {
++
++    // For getting the document element by ID:
++    $: function(id) {
++        'use strict';
++        if (typeof id == 'string') {
++            return document.getElementById(id);
++        }
++    }, // End of $() function.
++
++    // Function for setting the text of an element:
++    setText: function(id, message) {
++        'use strict';
++        if ( (typeof id == 'string')
++        && (typeof message == 'string') ) {
++    
++            // Get a reference to the element:
++            var output = this.$(id);
++            if (!output) return false;
++        
++            // Set the text
++            if (output.textContent !== undefined) {
++                output.textContent = message;
++            } else {
++                output.innerText = message;
++            }
++            return true;
++        } // End of main IF.
++    }, // End of setText() function.
++    
++    // Function for creating event listeners:
++    addEvent: function(obj, type, fn) {
++        'use strict';
++        if (obj && obj.addEventListener) { // W3C
++            obj.addEventListener(type, fn, false);
++        } else if (obj && obj.attachEvent) { // Older IE
++            obj.attachEvent('on' + type, fn);
++        }
++    }, // End of addEvent() function.
++    
++    // Function for removing event listeners:
++    removeEvent: function(obj, type, fn) {
++        'use strict';
++        if (obj && obj.removeEventListener) { // W3C
++            obj.removeEventListener(type, fn, false);
++        } else if (obj && obj.detachEvent) { // Older IE
++            obj.detachEvent('on' + type, fn);
++        }
++    }, // End of removeEvent() function.
++
++	enableTooltips: function(id) {
++	    'use strict';
++	
++		// Get a reference to the element:
++		var elem = this.$(id);
++
++		// Add four event handlers to the element:
++		this.addEvent(elem, 'focus', this.showTooltip);
++	    this.addEvent(elem, 'mouseover', this.showTooltip);
++	    this.addEvent(elem, 'blur', this.hideTooltip);
++	    this.addEvent(elem, 'mouseout', this.hideTooltip);
++	
++	}, // End of enableTooltips() function.
++
++	showTooltip: function(e) {
++	    'use strict';
++	
++		// Get the event object:
++		if (typeof e == 'undefined') var e = window.event;
++
++		// Get the event target:
++		var target = e.target || e.srcElement;
++		target.previousSibling.lastChild.style.visibility = 'visible';
++
++	}, // End of showTooltip() function.
++
++	hideTooltip: function(e) {
++	    'use strict';
++	
++		// Get the event object:
++		if (typeof e == 'undefined') var e = window.event;
++
++		// Get the event target:
++		var target = e.target || e.srcElement;
++		target.previousSibling.lastChild.style.visibility = 'hidden';
++
++	} // End of hideTooltip() function.
++
++}; // End of U declaration.
+\ No newline at end of file
+diff --git a/register.html b/register.html
+new file mode 100644
+index 0000000..74f3796
+--- /dev/null
++++ b/register.html
+@@ -0,0 +1,39 @@
++<!doctype html>
++<html lang="en">
++<head>
++    <meta charset="utf-8">
++    <title>Registration Form</title>
++    <!--[if lt IE 9]>
++    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
++    <![endif]-->
++    <link rel="stylesheet" href="css/newform.css">
++</head>
++<body>
++    <!-- Script 10.6 - register.html -->
++    <form action="#" method="post" id="theForm">
++        <fieldset><legend>Register</legend>
++			<p>All fields are required.</p>
++			<div class="two"><label for="firstName">First Name</label><input type="text" name="firstName" id="firstName" required></div>
++			<div class="two"><label for="lastName">Last Name</label><input type="text" name="lastName" id="lastName" required></div>
++			<div class="two"><label for="email">Email Address</label><input type="email" name="email" id="email" required></div>
++			<div class="two"><label for="phone">Phone Number<span class="tooltip">In the format XXX XXX XXXX or XXX-XXX-XXXX or XXXXXXXXXX.</span></label><input type="text" name="phone" id="phone" required></div>
++			<div class="two"><label for="city">City</label><input type="text" name="city" id="city" required></div>
++			<div class="two"><label for="state">State</label><select name="state" id="state">
++				<option value="">Select a State</option> 
++				<option value="AL">Alabama</option> 
++				<option value="AK">Alaska</option> 
++				<option value="AZ">Arizona</option> 
++				<option value="AR">Arkansas</option> 
++				<option value="CA">California</option> 
++				<option value="CO">Colorado</option>           
++			</select></div>    
++			<div class="two"><label for="zip">Zip Code</label><input type="text" name="zip" id="zip" required></div>
++			<div class="one"><input type="checkbox" name="terms" id="terms" required> I agree to the terms, whatever they are.</div>
++			<div class="one"><input type="submit" value="Register" id="submit"></div>
++        </fieldset>
++    </form>
++    <script src="js/utilities.js"></script>
++    <script src="js/errorMessages.js"></script>
++    <script src="js/register.js"></script>
++</body>
++</html>
+\ No newline at end of file
